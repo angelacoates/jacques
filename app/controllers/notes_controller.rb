@@ -1,39 +1,41 @@
 class NotesController < ApplicationController
   before_action :set_note, only: [:show, :update, :destroy]
 
-  # GET /notes
+  # GET /api/notes
+  # GET /api/notes.json
   def index
     @notes = Note.all
-
-    render json: @notes
   end
 
-  # GET /notes/1
+  # GET /api/notes/1
+  # GET /api/notes/1.json
   def show
-    render json: @note
   end
 
-  # POST /notes
+  # POST /api/notes
+  # POST /api/notes.json
   def create
     @note = Note.new(note_params)
 
     if @note.save
-      render json: @note, status: :created, location: @note
+      render :show, status: :created, location: @note
     else
-      render json: @note.errors, status: :unprocessable_entity
+      render :error, status: :bad_request
     end
   end
 
-  # PATCH/PUT /notes/1
+  # PATCH/PUT /api/notes/1
+  # PATCH/PUT /api/notes/1.json
   def update
     if @note.update(note_params)
-      render json: @note
+      render :show, status: :ok, location: @note
     else
       render json: @note.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /notes/1
+  # DELETE /api/notes/1
+  # DELETE /api/notes/1.json
   def destroy
     @note.destroy
   end
@@ -44,8 +46,8 @@ class NotesController < ApplicationController
       @note = Note.find(params[:id])
     end
 
-    # Only allow a trusted parameter "white list" through.
+    # Never trust parameters from the scary internet, only allow the white list through.
     def note_params
-      params.fetch(:note, {})
+      params.permit(:title, :body)
     end
 end

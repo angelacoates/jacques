@@ -12,7 +12,7 @@ class ExplorerTest < ActionDispatch::IntegrationTest
     assert_equal 200, status
     json = JSON.parse(response.body)
     assert json['notes']
-    assert json['notes'].length == 10
+    assert_equal 10, json['notes'].length
   end
 
   def test_it_should_be_in_the_correct_format
@@ -50,6 +50,7 @@ class ExplorerTest < ActionDispatch::IntegrationTest
         body:   "My created body",
         tags:   "api, machine, first"
       }
+
     assert_equal 400, status
     json = JSON.parse(response.body)
     assert_equal "Title can't be blank", json['errors'].first['error']
@@ -64,7 +65,7 @@ class ExplorerTest < ActionDispatch::IntegrationTest
       "body"        => note.body,
       "created_at"  => note.created_at.to_formatted_s(:iso8601),
       "updated_at"  => note.updated_at.to_formatted_s(:iso8601),
-      "tags"        => note.tags.map { |t| {"name" => t.name} }
+      "tags"        => note.tags.order(:id).map { |t| {"name" => t.name} }
     }
   end
 
